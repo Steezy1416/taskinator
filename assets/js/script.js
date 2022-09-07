@@ -1,5 +1,6 @@
 var taskForm = document.querySelector("#task-form");
 var taskToDoContainer = document.querySelector("#tasks-to-do-container");
+var taskOnCounter = 0
 
 /*
 When the task form button is clicked (button becase the event its listening for is submit which listents for buttons in the container or the enter key) the add task function is called.
@@ -44,6 +45,9 @@ var createNewList = function(taskDataObj) {
 
     var newList = document.createElement("li");
     newList.className = "task-item";
+
+    //gives the newlist a data attribute and sets it to the counter everytime a new list is created
+    newList.setAttribute("data-task-on", taskOnCounter);
     
     var listInformation = document.createElement("div");
     listInformation.className = "task-info"
@@ -51,7 +55,58 @@ var createNewList = function(taskDataObj) {
 
     newList.append(listInformation);
 
+    //taskaction takes in the button container from the create buttons function
+    var taskAction = createButtonActions(taskOnCounter);
+    newList.append(taskAction);
+
     taskToDoContainer.append(newList);
+
+    //increments the task on counter
+    taskOnCounter++;
 }
+
+var createButtonActions = function(taskOnCounter) {
+
+    //creates div element that will contain all the buttons
+    var buttonContainer = document.createElement("div");
+    buttonContainer.className = "task-actions"
+
+    //creates edit button
+    var editButton = document.createElement("button");
+    editButton.innerText = "Edit";
+    editButton.className = "btn edit-btn";
+    editButton.setAttribute("data-task-on", taskOnCounter);
+
+    buttonContainer.append(editButton);
+
+    //creates delete button
+    var deleteButton = document.createElement("button");
+    deleteButton.innerText = "Delete";
+    deleteButton.className = "btn delete-btn";
+    deleteButton.setAttribute("data-task-on", taskOnCounter);
+
+    buttonContainer.append(deleteButton);
+
+    //creates the select status dropdown
+    var taskStatusSelect = document.createElement("select");
+    taskStatusSelect.className = "select-status";
+    taskStatusSelect.setAttribute("name", "status-change")
+    taskStatusSelect.setAttribute("data-task-on", taskOnCounter)
+
+    //creates a loop that will create options for the select and will give its text based on the arrays incrementation
+    var statusChoices = ["To Do", "In Progress", "Completed"];
+    for(var i = 0; i < statusChoices.length; i++) {
+        var taskStatusOption = document.createElement("option")
+        taskStatusOption.innerText = statusChoices[i]
+        taskStatusOption.setAttribute("value", statusChoices[i])
+
+        taskStatusSelect.append(taskStatusOption);
+    }
+    
+    buttonContainer.append(taskStatusSelect)
+
+    //returns the completed button container
+    return(buttonContainer);
+};
 
 taskForm.addEventListener("submit", addTaskHandler);
