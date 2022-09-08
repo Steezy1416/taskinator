@@ -52,7 +52,7 @@ var createNewList = function(taskDataObj) {
     
     var listInformation = document.createElement("div");
     listInformation.className = "task-info"
-    listInformation.innerHTML = "<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.category + "</span>";
+    listInformation.innerHTML = "<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-category'>" + taskDataObj.category + "</span>";
 
     newList.append(listInformation);
 
@@ -113,17 +113,38 @@ var createButtonActions = function(taskOnCounter) {
 taskForm.addEventListener("submit", addTaskHandler);
 
 var taskButtonHandler = function(event) {
-    console.log(event.target);
+    var  eventTarget = event.target;
+    console.log(eventTarget);
 
-    if(event.target.matches(".delete-btn")) {
-        var taskId = event.target.getAttribute("data-task-on")
-        deleteTask(taskId)
+    if (event.target.matches(".edit-btn")) {
+        var taskId = eventTarget.getAttribute("data-task-on");
+        editTask(taskId);
     }
+    else if(event.target.matches(".delete-btn")) {
+        var taskId = eventTarget.getAttribute("data-task-on");
+        deleteTask(taskId);
+    }
+    
+};
+
+var editTask = function(taskId) {
+    var taskSelected = document.querySelector(".task-item[data-task-on='" + taskId + "']");
+
+    var taskName = taskSelected.querySelector("h3.task-name").innerText;
+
+    var taskType = taskSelected.querySelector("span.task-category").innerText;
+    
+    document.querySelector("input[name='task-name']").value = taskName;
+    document.querySelector("select[name='task-category']").value = taskType;
+
+    document.querySelector("#save-task").innerText = "Save task";
+    taskForm.setAttribute("data-task-on", taskId)
 };
 
 var deleteTask = function(taskId) {
     var taskSelected = document.querySelector(".task-item[data-task-on='" + taskId + "']");
     taskSelected.remove()
 };
+
 
 pageContent.addEventListener("click", taskButtonHandler);
