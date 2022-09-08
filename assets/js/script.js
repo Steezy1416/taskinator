@@ -1,3 +1,5 @@
+var tasks = [];
+
 var taskForm = document.querySelector("#task-form");
 var taskToDoContainer = document.querySelector("#tasks-to-do-container");
 var pageContent = document.querySelector("#page-content");
@@ -42,7 +44,8 @@ var addTaskHandler = function(event) {
     else {
         var taskDataObj = {
             name: taskNameInput,
-            category: taskCategoryInput
+            category: taskCategoryInput,
+            status: "to do"
         };
     
         createNewList(taskDataObj)
@@ -73,8 +76,14 @@ var createNewList = function(taskDataObj) {
 
     taskToDoContainer.append(newList);
 
+    taskDataObj.id = taskOnCounter;
+    tasks.push(taskDataObj)
+
     //increments the task on counter
     taskOnCounter++;
+
+    console.log(taskDataObj)
+    console.log(taskDataObj.status)
 }
 
 var completeEditTask = function(taskName, taskType, taskId) {
@@ -82,6 +91,13 @@ var completeEditTask = function(taskName, taskType, taskId) {
 
     taskSelected.querySelector("h3.task-name").textContent = taskName;
     taskSelected.querySelector("span.task-category").textContent = taskType;
+
+    for(var i = 0; i <tasks.length; i++) {
+        if(tasks[i].id === parseInt(taskId)) {
+            tasks[i].name = taskName;
+            tasks[i].type = taskType;
+        }
+    }
 
     alert("Task Updated!");
 
@@ -170,6 +186,14 @@ var taskStatusChangeHandler = function(event) {
   else if (statusValue === "completed") {
     tasksCompleted.appendChild(taskSelected);
   }
+
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+        tasks[i].status = statusValue;
+    }
+  }
+  console.log(tasks);
+
 }
 
 var editTask = function(taskId) {
@@ -189,6 +213,20 @@ var editTask = function(taskId) {
 var deleteTask = function(taskId) {
     var taskSelected = document.querySelector(".task-item[data-task-on='" + taskId + "']");
     taskSelected.remove()
+
+    // create new array to hold updated list of tasks
+    var updatedTaskArr = [];
+
+    // loop through current tasks
+    for (var i = 0; i < tasks.length; i++) {
+    // if tasks[i].id doesn't match the value of taskId, let's keep that task and push it into the new array
+    if (tasks[i].id !== parseInt(taskId)) {
+        updatedTaskArr.push(tasks[i]);
+    }
+    }
+
+    // reassign tasks array to be the same as updatedTaskArr
+    tasks = updatedTaskArr;
 };
 
 
