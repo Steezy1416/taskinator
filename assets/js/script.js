@@ -30,15 +30,24 @@ var addTaskHandler = function(event) {
         return false;
     }
 
-    var taskDataObj = {
-        name: taskNameInput,
-        category: taskCategoryInput
-    };
+    var isEdit = taskForm.hasAttribute("data-task-on");
+    
+    if (isEdit) {
+        var taskId = taskForm.getAttribute("data-task-on");
+        completeEditTask(taskNameInput, taskCategoryInput, taskId)
+    }
+
+    else {
+        var taskDataObj = {
+            name: taskNameInput,
+            category: taskCategoryInput
+        };
+    
+        createNewList(taskDataObj)
+    }
 
     //resets the form
     taskForm.reset();
-
-    createNewList(taskDataObj)
 
 };
 
@@ -64,6 +73,19 @@ var createNewList = function(taskDataObj) {
 
     //increments the task on counter
     taskOnCounter++;
+}
+
+var completeEditTask = function(taskName, taskType, taskId) {
+    var taskSelected = document.querySelector(".task-item[data-task-on='" + taskId + "']");
+
+    taskSelected.querySelector("h3.task-name").textContent = taskName;
+    taskSelected.querySelector("span.task-category").textContent = taskType;
+
+    alert("Task Updated!");
+
+    taskForm.removeAttribute("data-task-on");
+    document.querySelector("#save-task").innerText = "Add Task";
+
 }
 
 var createButtonActions = function(taskOnCounter) {
